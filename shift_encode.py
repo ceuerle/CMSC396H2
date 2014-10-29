@@ -17,7 +17,7 @@ new_string = ""
 counter = 0
 
 for i in range(len(string)):
-    new_string += alphabet[alphabet_dict[string[i]] + shift]
+    new_string += alphabet[(alphabet_dict[string[i]] + shift) % 26 ]
     counter = counter + 1
     if counter == 5:
         counter = 0
