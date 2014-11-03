@@ -1,3 +1,6 @@
+# Input: An affine-encoded text
+# Output: Most probable affine-decoded message of text
+
 import sys
 from ciphers import arr_to_str, str_to_arr, encode, affine_decode
 

@@ -36,8 +36,8 @@ def encode(message, n, mapping):
 			newmsg.append(message[i])
 	return newmsg
 
-# Decode a message using a set of mapping tables for possible encodes mappings[]
-# Finds the mapping table that maximizes the dot product of expected frequencies and observed frequencies
+# Decode a message using a set of encoding tables
+# Finds the encoding that maximizes the dot product of expected frequencies and observed frequencies
 # Returns a mapping for decoding
 # Note: to get decoded string itself, just use encode function
 def decode(message, n, mappings):
@@ -113,10 +113,16 @@ def vigenere_encode(message, key):
 			mapping[i][j] = (i + key[j]) % 26
 	return encode(message, len(key), mapping)
 
-# TODO: Vigenere cipher decode implementation, given n
+# Vigenere decode: basic brute force tries all 26^n keys
 def vigenere_decode(message, n):
-	return 0
+	mappings = []
+	for i in range(26**n):
+		mapping = [ [0]*n for x in range(26) ]
+		for i in range(n):
+			shift = i % 26
+			for j in range(26):
+				mapping[j][i] = (j + shift) % 26
+			i /= 26
+		mappings.append(mapping)
 
-# TODO: Global decode implementation - decode using all possible mappings, given n
-def global_decode(message, n):
-	return 0
+	return decode(message, n, mappings)

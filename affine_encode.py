@@ -1,3 +1,6 @@
+# Input: 1 Line specifying (a, b) for an affine cipher, followed by text
+# Output: text encoded by the affine cipher ax+b
+
 import sys
 from ciphers import arr_to_str, str_to_arr, affine_encode
 

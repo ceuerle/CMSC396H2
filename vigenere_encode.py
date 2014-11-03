@@ -1,3 +1,6 @@
+# Input: A vigenere key on line 1 followed by text
+# Output: text encoded by the vignere cipher using key
+
 import sys
 from ciphers import arr_to_str, str_to_arr, vigenere_encode
 
