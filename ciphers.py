@@ -116,13 +116,13 @@ def vigenere_encode(message, key):
 # Vigenere decode: basic brute force tries all 26^n keys
 def vigenere_decode(message, n):
 	mappings = []
-	for i in range(26**n):
+	for k in range(26**n):
 		mapping = [ [0]*n for x in range(26) ]
 		for i in range(n):
-			shift = i % 26
+			shift = k % 26
 			for j in range(26):
 				mapping[j][i] = (j + shift) % 26
-			i /= 26
+			k /= 26
 		mappings.append(mapping)
 
 	return decode(message, n, mappings)

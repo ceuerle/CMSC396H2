@@ -4,7 +4,7 @@
 import sys
 from ciphers import arr_to_str, str_to_arr, affine_encode
 
-v = sys.stdin.read()
+v = sys.stdin.read().upper()
 i = v.index('\n')
 [a,b] = v[:i].split(' ')
 a = int(a)
