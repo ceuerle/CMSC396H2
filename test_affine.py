@@ -22,6 +22,6 @@ else:
             if message[i] == decoded[i]:
                 matches += 1
             total += 1
-    print "FAlSE: " + str(float(matches)/len(encoded) * 100) + "% MATCH"
+    print "FAlSE: " + str(float(matches)/total * 100) + "% MATCH"
 #print decoded
  
