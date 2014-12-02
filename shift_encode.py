@@ -3,10 +3,8 @@ shift = int(input("Enter the shift number [0-25]: "))
 string = raw_input("Enter the string: ")
 string = string.upper()
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-alphabet_dict = {}
 
-for i in range(26):
-	alphabet_dict[alphabet[i]] = i
+alphabet_dict = { alphabet[ i ] : i for i in range( 26 ) }
 
 new_string = ""
 for i in range(len(string)):

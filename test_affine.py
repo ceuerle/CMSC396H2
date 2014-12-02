@@ -2,7 +2,9 @@ import sys
 from ciphers import arr_to_str, str_to_arr, affine_encode, affine_decode, encode
 
 v = sys.stdin.read().upper()
+print "Read input"
 i = v.index('\n')
+print v[:i]
 [a,b] = v[:i].split(' ')
 a = int(a)
 b = int(b)

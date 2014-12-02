@@ -1,11 +1,11 @@
 # Library of functions to perform encoding and decoding using substitution ciphers
 
 # Convert a message from a string to an equivalent array
-def str_to_arr(message):
-	arr = []
-	for c in message:
-		arr.append(ord(c) - ord('A'))
-	return arr
+def str_to_arr( message ):
+	l = list( message )
+	for x in l:
+		x = ( ord(x) - ord('A') )
+	return l
 
 # Convert array back to string
 def arr_to_str(message):
