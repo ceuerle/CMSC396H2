@@ -41,6 +41,7 @@ def encode(message, n, mapping):
 # Returns a mapping for decoding
 # Note: to get decoded string itself, just use encode function
 def decode(message, n, mappings):
+	dotproducts = []
 	letter_count = 0
 	# Observed count of each letter at position (i mod n)
 	g = [[0]*n for i in range(26)]
@@ -58,9 +59,15 @@ def decode(message, n, mappings):
 			for j in range(n):
 				observed_count += g[m[i][j]][j]
 			dotproduct += (freq[i] * observed_count)/letter_count
+		dotproducts.append(dotproduct)
 		if dotproduct > max_product:
 			max_product = dotproduct
 			mapping = m
+
+	# Print out dotproducts for comparison
+	dotproducts = sorted(iter(dotproducts))
+	# for d in dotproducts:
+	#	print d
 
 	# Compute inverse of the encoding to make it act as a decoder
 	inversemap = [ [0]*n for i in range(26) ]
@@ -113,16 +120,98 @@ def vigenere_encode(message, key):
 			mapping[i][j] = (i + key[j]) % 26
 	return encode(message, len(key), mapping)
 
-# Vigenere decode: basic brute force tries all 26^n keys
+# Vigenere decode, known key length: just a group of shift decodes
 def vigenere_decode(message, n):
-	mappings = []
-	for i in range(26**n):
-		mapping = [ [0]*n for x in range(26) ]
-		for i in range(n):
-			shift = i % 26
-			for j in range(26):
-				mapping[j][i] = (j + shift) % 26
-			i /= 26
-		mappings.append(mapping)
+	# Go through entire message
+	# Construct a group of substrings of message
+	  # corresponding to groups of same positions, mod n
+	substrs = [[] for i in range(n)]
+	pos = 0
+	for i in range(len(message)):
+		if message[i] >= 0 and message[i] < 26:
+			substrs[pos].append(message[i])
+			pos = (pos + 1) % n
+	mapping = [[] for i in range(26)]
+	for s in substrs:
+		m = shift_decode(s)
+		for i in range(26):
+			mapping[i].append(m[i][0])
+	return mapping
 
-	return decode(message, n, mappings)
+# Generic vigenere decode : look for the key length first
+# Look for repeated blocks of size repeat_length
+# Greatest common divisor of distances between repeats
+# Estimate key length
+# Run vigenere decode algorithm using estimated key length
+def vigenere_generic_decode(message, repeat_length=3):
+	# Estimation used, since strings can overlap themselves
+	smessage = arr_to_str(message) # Required due to hashing rule
+	substrs = { }
+	for i in range(len(message)-repeat_length+1):
+		if substrs.get(smessage[i:i+repeat_length]) == None:
+			substrs[smessage[i:i+repeat_length]] = [i]
+		else:
+			substrs[smessage[i:i+repeat_length]].append(i)
+	best_match = max(substrs.itervalues(), key=lambda x: len(x))
+	best_match.sort()
+	i = 0
+	# Trim list due to potential overlaps
+	while i < len(best_match)-1:
+		if best_match[i+1] - best_match[i] < repeat_length:
+			best_match.pop(i+1)
+		else:
+			i += 1
+	dists = []
+	for x in best_match:
+		for y in best_match:
+			d = x - y
+			if d < 0:
+				d *= -1
+			if not(d in dists):
+				dists.append(d)
+	gcd = dists[0]
+	for x in dists:
+		while x > 0:
+			y = x
+			x = gcd % y
+			gcd = y
+	return vigenere_decode(message, gcd)
+
+# Given a 26! random cipher, find it:
+# Assign a mapping of most frequent observed letters to letters
+# Try to perform swaps that increase the score
+def generic_decode(message):
+	letter_count = 0.0
+	# g is a frequency table; second entry per row is a letter index
+	g = []
+	for i in range(26):
+		g.append([0, i])
+	for i in range(len(message)):
+		if message[i] >= 0 and message[i] < 26:
+			g[message[i]][0] += 1
+			letter_count += 1
+	f2 = []
+	for i in range(26):
+		f2.append([freq[i], i])
+	# Sort both arrays
+	f2.sort(key=lambda x:x[0])
+	g2 = sorted(g, key=lambda x:x[0])
+
+	# Construct initial mapping
+	mapping = [0]*26
+	for i in range(26):
+		mapping[g2[i][1]] = [f2[i][1]]
+
+	# Keep trying to swap 2 elements to improve dot product
+	cont = 1
+	while cont:
+		cont = 0
+		for i in range(26):
+			for j in range(26):
+				if g[i][0]*freq[mapping[i][0]] + g[j][0]*freq[mapping[j][0]] < g[i][0]*freq[mapping[j][0]] + g[j][0]*freq[mapping[i][0]]:
+					tmp = mapping[i][0]
+					mapping[i][0] = mapping[j][0]
+					mapping[j][0] = tmp
+					cont = 1
+
+	return mapping
