@@ -29,7 +29,7 @@ for fn in fs:
 	elif rule == 'viggen':
 		decoded = ciphers.vigenere_generic_decode(text)
 	elif rule == 'generic':
-		decoded = [ciphers.generic_decode(text)]
+		decoded = ciphers.generic_decode(text)
 	else:
 		continue # file name not supported
 	message = ciphers.arr_to_str(ciphers.encode(text, len(decoded[0][0]), decoded[0]))

@@ -126,6 +126,7 @@ def vigenere_decode(message, n):
 	# Construct a group of substrings of message
 	  # corresponding to groups of same positions, mod n
 	substrs = [[] for i in range(n)]
+	print substrs
 	pos = 0
 	for i in range(len(message)):
 		if message[i] >= 0 and message[i] < 26:
@@ -148,7 +149,7 @@ def vigenere_decode(message, n):
 def vigenere_generic_decode(message, key_limit=20):
 	best_map = []
 	best_score = -1
-	for i in range(1,key_limit+1):
+	for i in range(key_limit):
 		(m, score) = vigenere_decode(message, i)
 		if score > best_score:
 			best_score = score
