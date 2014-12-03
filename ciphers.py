@@ -213,5 +213,4 @@ def generic_decode(message):
 					mapping[i][0] = mapping[j][0]
 					mapping[j][0] = tmp
 					cont = 1
-
 	return mapping

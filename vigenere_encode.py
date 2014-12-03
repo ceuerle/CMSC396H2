@@ -4,7 +4,7 @@
 import sys
 from ciphers import arr_to_str, str_to_arr, vigenere_encode
 
-v = sys.stdin.read()
+v = sys.stdin.read().upper()
 i = v.index('\n')
 key = str_to_arr(v[0:i])
 message = str_to_arr(v[i+1:-1])
