@@ -41,6 +41,13 @@ for fn in fs:
 	fout.write(encoded)
 	fout.close()
 
+	# Vigenere length known & unknown, key = zombified
+	key = ciphers.str_to_arr('zombified')
+	encoded = ciphers.arr_to_str(ciphers.vigenere_encode(text, key))
+	fout = open(outname + '_viggen_2.in', mode='w+')
+	fout.write(encoded)
+	fout.close()
+
 	# Generic - uses a randomly generated mapping
 	m = [8,5,11,18,10,6,4,3,14,0,25,1,12,
 			2,24,23,13,9,19,15,20,7,17,22,21,16]
@@ -49,4 +56,3 @@ for fn in fs:
 	fout = open(outname+'_generic_1.in', mode='w+')
 	fout.write(encoded)
 	fout.close()
-

@@ -132,28 +132,33 @@ def vigenere_decode(message, n):
 			substrs[pos].append(message[i])
 			pos = (pos + 1) % n
 	mapping = [[] for i in range(26)]
-	total_score = 0
 	for s in substrs:
 		(m,score) = shift_decode(s)
-		total_score += score
 		for i in range(26):
 			mapping[i].append(m[i][0])
-	return (mapping, total_score)
+	return (mapping, 0)
 
-# Generic vigenere decode : look for the key length first
-# Look for repeated blocks of size repeat_length
-# Greatest common divisor of distances between repeats
-# Estimate key length
-# Run vigenere decode algorithm using estimated key length
-def vigenere_generic_decode(message, key_limit=20):
-	best_map = []
-	best_score = -1
-	for i in range(1,key_limit+1):
-		(m, score) = vigenere_decode(message, i)
-		if score > best_score:
-			best_score = score
-			best_map = m
-	return (best_map, best_score)
+# Generic vigenere decode : run Vignere on all key lengths
+# Choose the key length resulting in a maximal dot product
+def vigenere_generic_decode(message, key_limit=10):
+	mapping = None
+	max_product = -1
+	for k in range(1, key_limit+1):
+		m = vigenere_decode(message, k)[0]
+		letter_count = 0
+		# Observed count of each letter at position (i mod n)
+		g = [0]*26
+		for i in range(len(message)):
+			if message[i] >= 0 and message[i] < 26:
+				g[m[message[i]][letter_count % k]] += 1
+				letter_count += 1
+		dotproduct = 0.0
+		for i in range(26):
+			dotproduct += (freq[i] * g[i])/letter_count
+		if dotproduct > max_product:
+			max_product = dotproduct
+			mapping = m
+	return (mapping, max_product)
 
 # Given a 26! random cipher, find it:
 # Assign a mapping of most frequent observed letters to letters
@@ -186,9 +191,13 @@ def generic_decode(message):
 		cont = 0
 		for i in range(26):
 			for j in range(26):
-				if g[i][0]*freq[mapping[i][0]] + g[j][0]*freq[mapping[j][0]] < g[i][0]*freq[mapping[j][0]] + g[j][0]*freq[mapping[i][0]]:
-					tmp = mapping[i][0]
-					mapping[i][0] = mapping[j][0]
-					mapping[j][0] = tmp
-					cont = 1
+				for k in range(26):
+					combs = [(i, j, k), (i, k, j), (j, i, k), (j, k, i), (k, i, j), (k, j, i)]
+					comb = max(combs, key=lambda x: g[x[0]][0]*freq[mapping[i][0]]+g[x[1]][0]*freq[mapping[j][0]]+g[x[2]][0]*freq[mapping[k][0]])
+					m = map(lambda x: mapping[x][0], comb)
+					if (i, j, k) != comb:
+						cont = 1
+					mapping[i][0] = m[0]
+					mapping[j][0] = m[1]
+					mapping[k][0] = m[2]
 	return mapping

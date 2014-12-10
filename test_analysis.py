@@ -2,9 +2,11 @@
 
 inpath = './tests/decodes/'
 srcpath = './tests/texts/'
-outpath = './tests/analysis.txt'
+outpath = './analysis.txt'
 
 fout = open(outpath, 'w+')
+
+fout.write('File Name\tCorrectness (%)\n')
 
 from os import listdir
 
